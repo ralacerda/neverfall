@@ -9,6 +9,8 @@ Here is what I'm looking to do:
 - [x] Build using `tsdown`
 - [x] Use `pnpm` for package management
 - [x] ESM only
+- [x] Eslint flat config
+- [x] Prettier latest version
 - [ ] Keep dependencies up to date
 - [ ] Monorepo with playground
 - [ ] Update eslint plugin
@@ -985,14 +987,16 @@ import { RouteError } from 'routes/error'
 
 // simulate slow routes in an http server that works in a Result / ResultAsync context
 // Adopted from https://github.com/parlez-vous/server/blob/2496bacf55a2acbebc30631b5562f34272794d76/src/routes/common/signup.ts
-export const slowDown = <T>(ms: number) => (value: T) =>
-  ResultAsync.fromSafePromise<T, RouteError>(
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(value)
-      }, ms)
-    }),
-  )
+export const slowDown =
+  <T>(ms: number) =>
+  (value: T) =>
+    ResultAsync.fromSafePromise<T, RouteError>(
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(value)
+        }, ms)
+      }),
+    )
 
 export const signupHandler = route<User>((req, sessionManager) =>
   decode(userSignupDecoder, req.body, 'Invalid request body').map((parsed) => {
