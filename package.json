@@ -16,7 +16,7 @@
     "format": "prettier --write 'src/**/*.ts?(x)' && pnpm run lint -- --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf ./dist ./tmp",
-    "build": "pnpm run clean && rollup --config && mv tmp/*.js dist && attw --pack .",
+    "build": "pnpm run clean && tsdown --format esm --format cjs src/index.ts && attw --pack .",
     "prepublishOnly": "pnpm run build",
     "release": "changeset publish",
     "version": "changeset version && pnpm i --lockfile-only"
@@ -42,11 +42,9 @@
     "eslint-config-prettier": "7.1.0",
     "eslint-plugin-prettier": "3.4.0",
     "prettier": "2.2.1",
-    "rollup": "^4.18.0",
-    "rollup-plugin-dts": "^6.1.1",
-    "rollup-plugin-typescript2": "^0.32.1",
     "testdouble": "3.20.2",
     "ts-toolbelt": "9.6.0",
+    "tsdown": "^0.12.9",
     "typescript": "5.8.3",
     "vitest": "^2.1.3"
   },
