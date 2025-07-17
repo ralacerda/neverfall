@@ -1,78 +1,48 @@
 # neverthrow
 
-## 8.2.0
+## v0.3.3
 
-### Minor Changes
+[compare changes](https://github.com/ralacerda/neverthrow2/compare/07c50038b8d5...v0.3.3)
 
-- [#615](https://github.com/supermacro/neverthrow/pull/615) [`85ed7fd`](https://github.com/supermacro/neverthrow/commit/85ed7fd3a1247e4c0e83bba13f5e874282243d75) Thanks [@konker](https://github.com/konker)! - Add orTee, which is the equivalent of andTee but for the error track.
+### 🚀 Enhancements
 
-- [#584](https://github.com/supermacro/neverthrow/pull/584) [`acea44a`](https://github.com/supermacro/neverthrow/commit/acea44adb98dda2ca32fe4e882879461cc7cedc2) Thanks [@macksal](https://github.com/macksal)! - Allow ok/err/okAsync/errAsync to accept zero arguments when returning void
+- Allowing CJS and ESM imports ([9c37be3](https://github.com/ralacerda/neverthrow2/commit/9c37be3))
 
-## 8.1.1
+### 📖 Documentation
 
-### Patch Changes
+- Update goal for using latest version of eslint and prettier ([8d7c1a1](https://github.com/ralacerda/neverthrow2/commit/8d7c1a1))
+- Include more stuff on roadmap ([d452939](https://github.com/ralacerda/neverthrow2/commit/d452939))
+- Going back on ESM only ([7008402](https://github.com/ralacerda/neverthrow2/commit/7008402))
 
-- [#600](https://github.com/supermacro/neverthrow/pull/600) [`3aee20a`](https://github.com/supermacro/neverthrow/commit/3aee20a1c429062d26f440fde32a3f26ef05533a) Thanks [@m-shaka](https://github.com/m-shaka)! - docs: updated README.md about `safeTry` and added @deprecated tag to safeUnwrap
+### 🏡 Chore
 
-## 8.1.0
+- Using pnpm ([a3832cf](https://github.com/ralacerda/neverthrow2/commit/a3832cf))
+- Removing babelrc and jest config ([532f141](https://github.com/ralacerda/neverthrow2/commit/532f141))
+- Use tsdown instead of rollup ([466424d](https://github.com/ralacerda/neverthrow2/commit/466424d))
+- Updateing pnpm-lock ([f4507d6](https://github.com/ralacerda/neverthrow2/commit/f4507d6))
+- Building esm only for now ([6c3f569](https://github.com/ralacerda/neverthrow2/commit/6c3f569))
+- Update readme ([23c1d9e](https://github.com/ralacerda/neverthrow2/commit/23c1d9e))
+- Fix package.json for esm only ([48d3d24](https://github.com/ralacerda/neverthrow2/commit/48d3d24))
+- Update eslint to flag config, remove styles plugin ([289dc64](https://github.com/ralacerda/neverthrow2/commit/289dc64))
+- Updating prettier and using esm config file ([1d31625](https://github.com/ralacerda/neverthrow2/commit/1d31625))
+- Update readme with checklist ([6e85a68](https://github.com/ralacerda/neverthrow2/commit/6e85a68))
+- Remove rollup linux optional dependency ([66dbca6](https://github.com/ralacerda/neverthrow2/commit/66dbca6))
+- Update vitest and fix errors ([f793e82](https://github.com/ralacerda/neverthrow2/commit/f793e82))
+- Update to use node 22 ([552e892](https://github.com/ralacerda/neverthrow2/commit/552e892))
+- Improve ci action ([b10156b](https://github.com/ralacerda/neverthrow2/commit/b10156b))
+- Allow node 20 ([6b88171](https://github.com/ralacerda/neverthrow2/commit/6b88171))
+- Remove attw since we are esm only ([18b7448](https://github.com/ralacerda/neverthrow2/commit/18b7448))
+- No need to use --frozen-lockfile ([2ec5e36](https://github.com/ralacerda/neverthrow2/commit/2ec5e36))
+- No need to use --frozen-lockfile" ([15c8db2](https://github.com/ralacerda/neverthrow2/commit/15c8db2))
+- Updating pnpm-lock ([0b6f495](https://github.com/ralacerda/neverthrow2/commit/0b6f495))
+- Version badge ([b57687c](https://github.com/ralacerda/neverthrow2/commit/b57687c))
+- Using unjs changelogen for changelogs ([df8a9a6](https://github.com/ralacerda/neverthrow2/commit/df8a9a6))
+- Missing changes to pnpm lock ([1d377bf](https://github.com/ralacerda/neverthrow2/commit/1d377bf))
 
-### Minor Changes
+### ❤️ Contributors
 
-- [#589](https://github.com/supermacro/neverthrow/pull/589) [`609b398`](https://github.com/supermacro/neverthrow/commit/609b398aa1fd258a1fede974707d54eb4c230f3c) Thanks [@dmmulroy](https://github.com/dmmulroy)! - safeTry should not require .safeUnwrap()
+- Renato Lacerda <renato.ac.lacerda@gmail.com>
 
-## 8.0.0
+## v0.3.2
 
-### Major Changes
-
-- [#484](https://github.com/supermacro/neverthrow/pull/484) [`09faf35`](https://github.com/supermacro/neverthrow/commit/09faf35a5ce701ed55b13b82074da9e50050526d) Thanks [@braxtonhall](https://github.com/braxtonhall)! - Allow orElse method to change ok types.
-  This makes the orElse types match the implementation.
-
-  This is a breaking change for the orElse type argument list,
-  as the ok type must now be provided before the err type.
-
-  ```diff
-  - result.orElse<ErrType>(foo)
-  + result.orElse<OkType, ErrType>(foo)
-  ```
-
-  This only applies if type arguments were
-  explicitly provided at an orElse callsite.
-  If the type arguments were inferred,
-  no updates are needed during the upgrade.
-
-## 7.2.0
-
-### Minor Changes
-
-- [#562](https://github.com/supermacro/neverthrow/pull/562) [`547352f`](https://github.com/supermacro/neverthrow/commit/547352f326206b2c5b403bde4ddc88825172f25c) Thanks [@sharno](https://github.com/sharno)! - change the return type of `safeTry` to be `ResultAsync<T, E>` instead of `Promise<Result<T, E>>` for better composability
-
-## 7.1.0
-
-### Minor Changes
-
-- [#467](https://github.com/supermacro/neverthrow/pull/467) [`4b9d2fd`](https://github.com/supermacro/neverthrow/commit/4b9d2fdaf03223945068509f948b57194732aa03) Thanks [@untidy-hair
-  ](https://github.com/untidy-hair)! - feat: add `andTee` and `andThrough` to handle side-effect
-
-### Patch Changes
-
-- [#483](https://github.com/supermacro/neverthrow/pull/483) [`96f7f66`](https://github.com/supermacro/neverthrow/commit/96f7f669ac83be705a389d47ed804e9d44a13932) Thanks [@braxtonhall](https://github.com/braxtonhall)! - Fix `combineWithAllErrors` types
-
-- [#563](https://github.com/supermacro/neverthrow/pull/563) [`eadf50c`](https://github.com/supermacro/neverthrow/commit/eadf50c695db896b8841c0ee301ae5eeba994b90) Thanks [@mattpocock](https://github.com/mattpocock)! - Made err() infer strings narrowly for easier error tagging.
-
-## 7.0.1
-
-### Patch Changes
-
-- [#527](https://github.com/supermacro/neverthrow/pull/527) [`2e1f198`](https://github.com/supermacro/neverthrow/commit/2e1f19899800ce5e1164412c6a693cf2f1c40b20) Thanks [@3846masa](https://github.com/3846masa)! - fix: change type definitions to make inferring types of safeTry more strict
-
-- [#497](https://github.com/supermacro/neverthrow/pull/497) [`e06203e`](https://github.com/supermacro/neverthrow/commit/e06203e90b2b64edaa42707cbca8383c9f4765e8) Thanks [@braxtonhall](https://github.com/braxtonhall)! - enhance type inferrence of `match`
-
-## 7.0.0
-
-### Major Changes
-
-- [#553](https://github.com/supermacro/neverthrow/pull/553) [`5a3af0a`](https://github.com/supermacro/neverthrow/commit/5a3af0a55d0c440dfd50bfbbe021c6e4b973184b) Thanks [@m-shaka](https://github.com/m-shaka)! - Declare the minimum supported Node.js version
-
-  `Neverthrow` does not depend on any Node.js version-specific features, so it should work with any version of Node.js that supports ES6 and other runtimes like Browser, Deno, etc.
-
-  However, for the sake of maintaining a consistent development environment, we should declare the minimum supported version of Node.js in the `engines` field of the `package.json` file.
+First public release of NeverThrow2.

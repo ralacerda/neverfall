@@ -1,6 +1,6 @@
 {
   "name": "@ralacerda/neverthrow2",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "Stop throwing errors, and instead return Results!",
   "type": "module",
   "main": "dist/index.js",
