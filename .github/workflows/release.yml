@@ -19,15 +19,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - run: npm i
+      - run: pnpm i
 
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
         with:
-          version: npm run version
+          version: pnpm run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -42,15 +42,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - run: npm i
+      - run: pnpm i
 
       - name: release
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: npm run release
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
