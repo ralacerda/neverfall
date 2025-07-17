@@ -8,7 +8,6 @@ Here is what I'm looking to do:
 
 - [x] Build using `tsdown`
 - [x] Use `pnpm` for package management
-- [x] ESM only
 - [x] Eslint flat config
 - [x] Only using prettier as formatter
 - [ ] Vuepress documentation
@@ -16,6 +15,7 @@ Here is what I'm looking to do:
 - [ ] Monorepo with playground and examples
 - [ ] Update eslint plugin
 - [ ] Deprecate namespaces export
+- [ ] ~~ESM only~~
 
 <div id="toc"></div>
 
