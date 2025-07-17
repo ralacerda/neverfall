@@ -19,15 +19,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.RUNNER_NODE_VERSION }}
-      - name: cache dependencies
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
         uses: actions/cache@v4
-        id: cache-dependencies
         with:
-          path: "node_modules"
-          key: depends-node${{ env.RUNNER_NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: npm i
+        run: pnpm install --frozen-lockfile
   
   typecheck:
     runs-on: ubuntu-latest
@@ -38,13 +44,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.RUNNER_NODE_VERSION }}
-      - name: restore dependencies cache
-        uses: actions/cache/restore@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
-          path: "node_modules"
-          key: depends-node${{ env.RUNNER_NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
       - name: typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
   
   lint:
     runs-on: ubuntu-latest
@@ -55,13 +71,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.RUNNER_NODE_VERSION }}
-      - name: restore dependencies cache
-        uses: actions/cache/restore@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
-          path: "node_modules"
-          key: depends-node${{ env.RUNNER_NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
       - name: lint
-        run: npm run lint
+        run: pnpm run lint
 
   build:
     runs-on: ubuntu-latest
@@ -72,33 +98,53 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.RUNNER_NODE_VERSION }}
-      - name: restore dependencies cache
-        uses: actions/cache/restore@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
-          path: "node_modules"
-          key: depends-node${{ env.RUNNER_NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
       - name: build
-        run: npm run build
+        run: pnpm run build
       
   test:
     runs-on: ubuntu-latest
     needs: install_deps
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22, 24]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: restore dependencies cache
-        uses: actions/cache/restore@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
-          path: "node_modules"
-          key: depends-node${{ env.RUNNER_NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
       - name: test
-        run: npm run test
+        run: pnpm run test
   test_result:
     runs-on: ubuntu-latest
     needs: test
