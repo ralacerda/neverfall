@@ -24,7 +24,7 @@ Here is what I'm looking to do:
 ## Table Of Contents
 
 - [Installation](#installation)
-- [Recommended: Use `eslint-plugin-neverthrow`](#recommended-use-eslint-plugin-neverthrow)
+- [Eslint Plugin](#eslint-plugin)
 - [Top-Level API](#top-level-api)
 - [API Documentation](#api-documentation)
   - [Synchronous API (`Result`)](#synchronous-api-result)
@@ -73,7 +73,7 @@ Here is what I'm looking to do:
     - [`fromSafePromise`](#fromsafepromise)
     - [`safeTry`](#safetry)
   - [Testing](#testing)
-- [A note on the Package Name](#a-note-on-the-package-name)
+- [A note on the neverthrow Package Name](#a-note-on-the-neverthrow-package-name)
 
 ## Installation
 
