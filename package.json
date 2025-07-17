@@ -1,6 +1,6 @@
 {
-  "name": "neverthrow",
-  "version": "8.2.0",
+  "name": "@ralacerda/neverthrow2",
+  "version": "0.1.0",
   "description": "Stop throwing errors, and instead return Results!",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/supermacro/neverthrow.git"
+    "url": "git+https://github.com/ralacerda/neverthrow2.git"
   },
-  "author": "Giorgio Delgado",
+  "author": "Renato Lacerda",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/supermacro/neverthrow/issues"
+    "url": "https://github.com/ralacerda/neverthrow2/issues"
   },
-  "homepage": "https://github.com/supermacro/neverthrow#readme",
+  "homepage": "https://github.com/ralacerda/neverthrow2#readme",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.3",
     "@changesets/changelog-github": "^0.5.0",

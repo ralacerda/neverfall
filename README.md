@@ -1,18 +1,13 @@
-# NeverThrow 🙅
-
-[![GitHub Workflow Status](https://github.com/supermacro/neverthrow/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/supermacro/neverthrow/actions)
+# NeverThrow2 🙅
 
 ## Description
 
-Encode failure into your program.
-
-This package contains a `Result` type that represents either success (`Ok`) or failure (`Err`).
-
-For asynchronous tasks, `neverthrow` offers a `ResultAsync` class which wraps a `Promise<Result<T, E>>` and gives you the same level of expressivity and control as a regular `Result<T, E>`.
-
-`ResultAsync` is `thenable` meaning it **behaves exactly like a native `Promise<Result>`** ... except you have access to the same methods that `Result` provides without having to `await` or `.then` the promise! Check out [the wiki](https://github.com/supermacro/neverthrow/wiki/Basic-Usage-Examples#asynchronous-api) for examples and best practices.
-
-> Need to see real-life examples of how to leverage this package for error handling? See this repo: https://github.com/parlez-vous/server
+A fork from [`neverthrow`](https://github.com/supermacro/neverthrow).
+The goal of this fork is continue the development of `neverthrow` while maintaining as much of the original code as possible.
+Here is what I'm looking to do:
+- [ ] Build using `tsdown`
+- [ ] Use `pnpm` for package management
+- [ ] Keep dependencies up to date
 
 <div id="toc"></div>
 
