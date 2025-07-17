@@ -1,7 +1,8 @@
 {
   "name": "@ralacerda/neverthrow2",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Stop throwing errors, and instead return Results!",
+  "type": "module",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
@@ -16,7 +17,7 @@
     "format": "prettier --write 'src/**/*.ts?(x)' && pnpm run lint -- --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf ./dist ./tmp",
-    "build": "pnpm run clean && tsdown --format esm --format cjs src/index.ts && attw --pack .",
+    "build": "pnpm run clean && tsdown src/index.ts && attw --profile esm-only --pack . ",
     "prepublishOnly": "pnpm run build",
     "release": "changeset publish",
     "version": "changeset version && pnpm i --lockfile-only"
