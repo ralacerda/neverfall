@@ -3,11 +3,16 @@
   "version": "0.3.1",
   "description": "Stop throwing errors, and instead return Results!",
   "type": "module",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
+    "import": {
+      "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "require": {
+      "default": "./dist/index.cjs",
+      "types": "./dist/index.d.cts"
     }
   },
   "files": [
@@ -21,7 +26,7 @@
     "format": "prettier --write 'src/**/*.ts' && eslint --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf ./dist ./tmp",
-    "build": "pnpm run clean && tsdown src/index.ts",
+    "build": "pnpm run clean && tsdown --format cjs --format esm src/index.ts && attw --pack .",
     "prepublishOnly": "pnpm run build",
     "release": "changeset publish",
     "version": "changeset version && pnpm i --lockfile-only"
@@ -59,5 +64,8 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.13.1"
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@arethetypeswrong/cli": "^0.18.2"
+  }
 }
