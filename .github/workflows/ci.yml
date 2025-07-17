@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
   
   typecheck:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
       - name: typecheck
         run: pnpm run typecheck
   
@@ -85,7 +85,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
       - name: lint
         run: pnpm run lint
 
@@ -112,7 +112,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
       - name: build
         run: pnpm run build
       
@@ -142,7 +142,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
       - name: test
         run: pnpm run test
   test_result:
