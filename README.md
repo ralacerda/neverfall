@@ -10,7 +10,7 @@ Here is what I'm looking to do:
 - [x] Use `pnpm` for package management
 - [x] ESM only
 - [x] Eslint flat config
-- [x] Prettier latest version
+- [x] Only using prettier as formatter
 - [ ] Keep dependencies up to date
 - [ ] Monorepo with playground
 - [ ] Update eslint plugin
