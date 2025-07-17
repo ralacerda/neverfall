@@ -58,7 +58,7 @@
     "error"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "packageManager": "pnpm@10.13.1"
 }
