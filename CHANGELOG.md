@@ -1,5 +1,10 @@
 # neverfall
 
+## v1.0.0
+
+Release as a stable version of the forked project.
+It should be 100% compatible with `neverthrow` v8.2.0.
+
 ## v0.3.3
 
 First release of the forked project.

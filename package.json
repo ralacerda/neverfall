@@ -1,6 +1,6 @@
 {
   "name": "neverfall",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "description": "Stop throwing errors, and instead return Results!",
   "type": "module",
   "main": "dist/index.js",
