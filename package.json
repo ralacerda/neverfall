@@ -1,5 +1,5 @@
 {
-  "name": "@ralacerda/neverthrow2",
+  "name": "neverfall",
   "version": "0.3.3",
   "description": "Stop throwing errors, and instead return Results!",
   "type": "module",
