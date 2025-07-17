@@ -1,4 +1,5 @@
 # NeverThrow2 🙅
+![NPM Version](https://img.shields.io/npm/v/@ralacerda/neverthrow2)
 
 ## Description
 
