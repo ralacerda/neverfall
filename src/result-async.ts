@@ -165,7 +165,7 @@ export class ResultAsync<T, E> implements PromiseLike<Result<T, E>> {
     f: (t: T) => R,
   ): ResultAsync<InferAsyncOkTypes<R>, InferAsyncErrTypes<R> | E>
   andThen<U, F>(f: (t: T) => Result<U, F> | ResultAsync<U, F>): ResultAsync<U, E | F>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   andThen(f: any): any {
     return new ResultAsync(
       this._promise.then((res) => {
@@ -186,7 +186,7 @@ export class ResultAsync<T, E> implements PromiseLike<Result<T, E>> {
     f: (e: E) => R,
   ): ResultAsync<InferAsyncOkTypes<R> | T, InferAsyncErrTypes<R>>
   orElse<U, A>(f: (e: E) => Result<U, A> | ResultAsync<U, A>): ResultAsync<U | T, A>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   orElse(f: any): any {
     return new ResultAsync(
       this._promise.then(async (res: Result<T, E>) => {
