@@ -11,8 +11,9 @@ Here is what I'm looking to do:
 - [x] ESM only
 - [x] Eslint flat config
 - [x] Only using prettier as formatter
+- [ ] Vuepress documentation
 - [ ] Keep dependencies up to date
-- [ ] Monorepo with playground
+- [ ] Monorepo with playground and examples
 - [ ] Update eslint plugin
 - [ ] Deprecate namespaces export
 
