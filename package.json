@@ -21,7 +21,7 @@
     "format": "prettier --write 'src/**/*.ts' && eslint --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf ./dist ./tmp",
-    "build": "pnpm run clean && tsdown src/index.ts && attw --profile esm-only --pack . ",
+    "build": "pnpm run clean && tsdown src/index.ts",
     "prepublishOnly": "pnpm run build",
     "release": "changeset publish",
     "version": "changeset version && pnpm i --lockfile-only"
@@ -37,7 +37,6 @@
   },
   "homepage": "https://github.com/ralacerda/neverthrow2#readme",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.3",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.7",
     "@eslint/js": "^9.31.0",
