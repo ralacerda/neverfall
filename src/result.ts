@@ -35,19 +35,19 @@ export namespace Result {
   }
 
   export function combine<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]]
+    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
   >(resultList: T): CombineResults<T>
   export function combine<T extends readonly Result<unknown, unknown>[]>(
     resultList: T,
   ): CombineResults<T>
   export function combine<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]]
+    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
   >(resultList: T): CombineResults<T> {
     return combineResultList(resultList) as CombineResults<T>
   }
 
   export function combineWithAllErrors<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]]
+    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
   >(resultList: T): CombineResultsWithAllErrorsArray<T>
   export function combineWithAllErrors<T extends readonly Result<unknown, unknown>[]>(
     resultList: T,
@@ -88,7 +88,7 @@ export function err<T = never, E = unknown>(err: E): Err<T, E> {
 export function safeTry<T, E>(body: () => Generator<Err<never, E>, Result<T, E>>): Result<T, E>
 export function safeTry<
   YieldErr extends Err<never, unknown>,
-  GeneratorReturnResult extends Result<unknown, unknown>
+  GeneratorReturnResult extends Result<unknown, unknown>,
 >(
   body: () => Generator<YieldErr, GeneratorReturnResult>,
 ): Result<
@@ -112,7 +112,7 @@ export function safeTry<T, E>(
 ): ResultAsync<T, E>
 export function safeTry<
   YieldErr extends Err<never, unknown>,
-  GeneratorReturnResult extends Result<unknown, unknown>
+  GeneratorReturnResult extends Result<unknown, unknown>,
 >(
   body: () => AsyncGenerator<YieldErr, GeneratorReturnResult>,
 ): ResultAsync<
@@ -324,7 +324,6 @@ export class Ok<T, E> implements IResult<T, E> {
     return ok(f(this.value))
   }
 
-   
   mapErr<U>(_f: (e: E) => U): Result<T, U> {
     return ok(this.value)
   }
@@ -384,12 +383,10 @@ export class Ok<T, E> implements IResult<T, E> {
     return ResultAsync.fromSafePromise(f(this.value))
   }
 
-   
   unwrapOr<A>(_v: A): T | A {
     return this.value
   }
 
-   
   match<A, B = A>(ok: (t: T) => A, _err: (e: E) => B): A | B {
     return ok(this.value)
   }
@@ -427,7 +424,6 @@ export class Err<T, E> implements IResult<T, E> {
     return !this.isOk()
   }
 
-   
   map<A>(_f: (t: T) => A): Result<A, E> {
     return err(this.error)
   }
@@ -471,7 +467,6 @@ export class Err<T, E> implements IResult<T, E> {
     return f(this.error)
   }
 
-   
   asyncAndThen<U, F>(_f: (t: T) => ResultAsync<U, F>): ResultAsync<U, E | F> {
     return errAsync<U, E>(this.error)
   }
@@ -480,7 +475,6 @@ export class Err<T, E> implements IResult<T, E> {
     return errAsync<T, E>(this.error)
   }
 
-   
   asyncMap<U>(_f: (t: T) => Promise<U>): ResultAsync<U, E> {
     return errAsync<U, E>(this.error)
   }
@@ -579,7 +573,7 @@ type Prev = [
   47,
   48,
   49,
-  ...0[]
+  ...0[],
 ]
 
 // Collects the results array into separate tuple array.
@@ -592,19 +586,19 @@ type CollectResults<T, Collected extends unknown[] = [], Depth extends number = 
 ] extends [never]
   ? []
   : T extends [infer H, ...infer Rest]
-  ? // And test whether the head of the list is a result
-    H extends Result<infer L, infer R>
-    ? // Continue collecting...
-      CollectResults<
-        // the rest of the elements
-        Rest,
-        // The collected
-        [...Collected, [L, R]],
-        // and one less of the current depth
-        Prev[Depth]
-      >
-    : never // Impossible
-  : Collected
+    ? // And test whether the head of the list is a result
+      H extends Result<infer L, infer R>
+      ? // Continue collecting...
+        CollectResults<
+          // the rest of the elements
+          Rest,
+          // The collected
+          [...Collected, [L, R]],
+          // and one less of the current depth
+          Prev[Depth]
+        >
+      : never // Impossible
+    : Collected
 
 // Transposes an array
 //
@@ -614,7 +608,7 @@ type CollectResults<T, Collected extends unknown[] = [], Depth extends number = 
 export type Transpose<
   A,
   Transposed extends unknown[][] = [],
-  Depth extends number = 10
+  Depth extends number = 10,
 > = A extends [infer T, ...infer Rest]
   ? T extends [infer L, infer R]
     ? Transposed extends [infer PL, infer PR]
@@ -632,21 +626,16 @@ export type Transpose<
 //
 // T     - The array of the results
 // Depth - The maximum depth.
-export type Combine<T, Depth extends number = 5> = Transpose<CollectResults<T>, [], Depth> extends [
-  infer L,
-  infer R,
-]
-  ? [UnknownMembersToNever<L>, UnknownMembersToNever<R>]
-  : Transpose<CollectResults<T>, [], Depth> extends []
-  ? [[], []]
-  : never
+export type Combine<T, Depth extends number = 5> =
+  Transpose<CollectResults<T>, [], Depth> extends [infer L, infer R]
+    ? [UnknownMembersToNever<L>, UnknownMembersToNever<R>]
+    : Transpose<CollectResults<T>, [], Depth> extends []
+      ? [[], []]
+      : never
 
 // Deduplicates the result, as the result type is a union of Err and Ok types.
-export type Dedup<T> = T extends Result<infer RL, infer RR>
-  ? [unknown] extends [RL]
-    ? Err<RL, RR>
-    : Ok<RL, RR>
-  : T
+export type Dedup<T> =
+  T extends Result<infer RL, infer RR> ? ([unknown] extends [RL] ? Err<RL, RR> : Ok<RL, RR>) : T
 
 // Given a union, this gives the array of the union members.
 export type MemberListOf<T> = (
@@ -669,12 +658,12 @@ export type MemberListOf<T> = (
 export type EmptyArrayToNever<T, NeverArrayToNever extends number = 0> = T extends []
   ? never
   : NeverArrayToNever extends 1
-  ? T extends [never, ...infer Rest]
-    ? [EmptyArrayToNever<Rest>] extends [never]
-      ? never
+    ? T extends [never, ...infer Rest]
+      ? [EmptyArrayToNever<Rest>] extends [never]
+        ? never
+        : T
       : T
     : T
-  : T
 
 // Converts the `unknown` items of an array to `never`s.
 type UnknownMembersToNever<T> = T extends [infer H, ...infer R]
@@ -695,31 +684,24 @@ export type IsLiteralArray<T> = T extends { length: infer L }
 
 // Traverses an array of results and returns a single result containing
 // the oks and errs union-ed/combined.
-type Traverse<T, Depth extends number = 5> = Combine<T, Depth> extends [infer Oks, infer Errs]
-  ? Result<EmptyArrayToNever<Oks, 1>, MembersToUnion<Errs>>
-  : never
+type Traverse<T, Depth extends number = 5> =
+  Combine<T, Depth> extends [infer Oks, infer Errs]
+    ? Result<EmptyArrayToNever<Oks, 1>, MembersToUnion<Errs>>
+    : never
 
 // Traverses an array of results and returns a single result containing
 // the oks combined and the array of errors combined.
-type TraverseWithAllErrors<T, Depth extends number = 5> = Traverse<T, Depth> extends Result<
-  infer Oks,
-  infer Errs
->
-  ? Result<Oks, Errs[]>
-  : never
+type TraverseWithAllErrors<T, Depth extends number = 5> =
+  Traverse<T, Depth> extends Result<infer Oks, infer Errs> ? Result<Oks, Errs[]> : never
 
 // Combines the array of results into one result.
-export type CombineResults<
-  T extends readonly Result<unknown, unknown>[]
-> = IsLiteralArray<T> extends 1
-  ? Traverse<T>
-  : Result<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>
+export type CombineResults<T extends readonly Result<unknown, unknown>[]> =
+  IsLiteralArray<T> extends 1 ? Traverse<T> : Result<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>
 
 // Combines the array of results into one result with all errors.
-export type CombineResultsWithAllErrorsArray<
-  T extends readonly Result<unknown, unknown>[]
-> = IsLiteralArray<T> extends 1
-  ? TraverseWithAllErrors<T>
-  : Result<ExtractOkTypes<T>, ExtractErrTypes<T>[number][]>
+export type CombineResultsWithAllErrorsArray<T extends readonly Result<unknown, unknown>[]> =
+  IsLiteralArray<T> extends 1
+    ? TraverseWithAllErrors<T>
+    : Result<ExtractOkTypes<T>, ExtractErrTypes<T>[number][]>
 
 //#endregion
