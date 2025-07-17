@@ -78,32 +78,21 @@ Here is what I'm looking to do:
 ## Installation
 
 ```sh
-> npm install neverthrow
+> npm install neverfall
 ```
 
-## Recommended: Use `eslint-plugin-neverthrow`
+## Eslint plugin
 
 As part of `neverthrow`s [bounty program](https://github.com/supermacro/neverthrow/issues/314), user [mdbetancourt](https://github.com/mdbetancourt) created [`eslint-plugin-neverthrow`](https://github.com/mdbetancourt/eslint-plugin-neverthrow) to ensure that errors are not gone unhandled.
 
-Install by running:
+Unfortunately The current version is not working with the latest versions of eslint.
+Hopefully, the original author will update it soon.
 
-```sh
-> npm install eslint-plugin-neverthrow
-```
-
-With `eslint-plugin-neverthrow`, you are forced to consume the result in one of the following three ways:
-
-- Calling `.match`
-- Calling `.unwrapOr`
-- Calling `._unsafeUnwrap`
-
-This ensures that you're explicitly handling the error of your `Result`.
-
-This plugin is essentially a porting of Rust's [`must-use`](https://doc.rust-lang.org/std/result/#results-must-be-used) attribute.
+If you are aware of a solution or alternative, please open an issue or a PR.
 
 ## Top-Level API
 
-`neverthrow` exposes the following:
+`neverfall` exposes the following:
 
 - `ok` convenience function to create an `Ok` variant of `Result`
 - `err` convenience function to create an `Err` variant of `Result`
@@ -129,14 +118,14 @@ import {
   fromPromise,
   fromSafePromise,
   safeTry,
-} from 'neverthrow'
+} from 'neverfall'
 ```
 
 ---
 
-**Check out the [wiki](https://github.com/supermacro/neverthrow/wiki) for help on how to make the most of `neverthrow`.**
+**Check out the [neverthrow wiki](https://github.com/supermacro/neverthrow/wiki) for help on how to make the most of `neverfall` and `neverthrow`.**
 
-If you find this package useful, please consider [sponsoring me](https://github.com/sponsors/supermacro/) or simply [buying me a coffee](https://ko-fi.com/gdelgado)!
+If you find this package useful, please consider [sponsoring the original package creator](https://github.com/sponsors/supermacro/) or simply [buying him coffe](https://ko-fi.com/gdelgado)!
 
 ---
 
@@ -157,7 +146,7 @@ ok<T, E>(value: T): Ok<T, E> { ... }
 **Example:**
 
 ```typescript
-import { ok } from 'neverthrow'
+import { ok } from 'neverfall'
 
 const myResult = ok({ myData: 'test' }) // instance of `Ok`
 
@@ -182,7 +171,7 @@ err<T, E>(error: E): Err<T, E> { ... }
 **Example:**
 
 ```typescript
-import { err } from 'neverthrow'
+import { err } from 'neverfall'
 
 const myResult = err('Oh noooo') // instance of `Err`
 
@@ -348,7 +337,7 @@ class Result<T, E> {
 **Example 1: Chaining Results**
 
 ```typescript
-import { err, ok } from 'neverthrow'
+import { err, ok } from 'neverfall'
 
 const sq = (n: number): Result<number, number> => ok(n ** 2)
 
@@ -727,7 +716,7 @@ map what is thrown to a known type.
 **Example**:
 
 ```typescript
-import { Result } from 'neverthrow'
+import { Result } from 'neverfall'
 
 type ParseError = { message: string }
 const toParseError = (): ParseError => ({ message: 'Parse Error' })
@@ -851,7 +840,7 @@ okAsync<T, E>(value: T): ResultAsync<T, E>
 **Example:**
 
 ```typescript
-import { okAsync } from 'neverthrow'
+import { okAsync } from 'neverfall'
 
 const myResultAsync = okAsync({ myData: 'test' }) // instance of `ResultAsync`
 
@@ -878,7 +867,7 @@ errAsync<T, E>(error: E): ResultAsync<T, E>
 **Example:**
 
 ```typescript
-import { errAsync } from 'neverthrow'
+import { errAsync } from 'neverfall'
 
 const myResultAsync = errAsync('Oh nooo') // instance of `ResultAsync`
 
@@ -899,7 +888,7 @@ Similar to [Result.fromThrowable](#resultfromthrowable-static-class-method), but
 **Example**:
 
 ```typescript
-import { ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverfall'
 import { insertIntoDb } from 'imaginary-database'
 // insertIntoDb(user: User): Promise<User>
 
@@ -913,7 +902,7 @@ errors synchronously rather than returning a rejected `Promise`. For example:
 
 ```typescript
 // NOT SAFE !!
-import { ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverfall'
 import { db } from 'imaginary-database'
 // db.insert<T>(table: string, value: T): Promise<T>
 
@@ -944,7 +933,7 @@ The second argument handles the rejection case of the promise and maps the error
 ```typescript
 // fromPromise is a static class method
 // also available as a standalone function
-// import { fromPromise } from 'neverthrow'
+// import { fromPromise } from 'neverfall'
 ResultAsync.fromPromise<T, E>(
   promise: PromiseLike<T>,
   errorHandler: (unknownError: unknown) => E)
@@ -956,7 +945,7 @@ If you are working with `PromiseLike` objects that you **know for a fact** will 
 **Example**:
 
 ```typescript
-import { ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverfall'
 import { insertIntoDb } from 'imaginary-database'
 // insertIntoDb(user: User): Promise<User>
 
@@ -977,7 +966,7 @@ Same as `ResultAsync.fromPromise` except that it does not handle the rejection o
 ```typescript
 // fromPromise is a static class method
 // also available as a standalone function
-// import { fromPromise } from 'neverthrow'
+// import { fromPromise } from 'neverfall'
 ResultAsync.fromSafePromise<T, E>(
   promise: PromiseLike<T>
 ): ResultAsync<T, E> { ... }
@@ -1611,7 +1600,7 @@ expect(myResult._unsafeUnwrap()).toBe(someExpectation)
 However, do note that `Result` instances are comparable. So you don't necessarily need to unwrap them in order to assert expectations in your tests. So you could also do something like this:
 
 ```typescript
-import { ok } from 'neverthrow'
+import { ok } from 'neverfall'
 
 // ...
 
@@ -1628,15 +1617,9 @@ _unsafeUnwrapErr({
 // ^ Now the error object will have a `.stack` property containing the current stack
 ```
 
----
+## A note on the `neverthrow` Package Name
 
-If you find this package useful, please consider [sponsoring me](https://github.com/sponsors/supermacro/) or simply [buying me a coffee](https://ko-fi.com/gdelgado)!
-
----
-
-## A note on the Package Name
-
-Although the package is called `neverthrow`, please don't take this literally. I am simply encouraging the developer to think a bit more about the ergonomics and usage of whatever software they are writing.
+Although the original package is called `neverthrow`, please don't take this literally. The authors are simply encouraging the developer to think a bit more about the ergonomics and usage of whatever software they are writing.
 
 `Throw`ing and `catching` is very similar to using `goto` statements - in other words; it makes reasoning about your programs harder. Secondly, by using `throw` you make the assumption that the caller of your function is implementing `catch`. This is a known source of errors. Example: One dev `throw`s and another dev uses the function without prior knowledge that the function will throw. Thus, and edge case has been left unhandled and now you have unhappy users, bosses, cats, etc.
 
@@ -1644,4 +1627,4 @@ With all that said, there are definitely good use cases for throwing in your pro
 
 ### License
 
-The neverthrow project is available as open source under the terms of the [MIT license](https://github.com/supermacro/neverthrow/blob/master/LICENSE).
+The neverfall project is a fork of neverthrow, and available as open source under the terms of the [MIT license](https://github.com/supermacro/neverfall/blob/master/LICENSE).
