@@ -207,22 +207,6 @@ export class ResultAsync<T, E> implements PromiseLike<Result<T, E>> {
     return this._promise.then((res) => res.unwrapOr(t))
   }
 
-  /**
-   * @deprecated will be removed in 9.0.0.
-   *
-   * You can use `safeTry` without this method.
-   * @example
-   * ```typescript
-   * safeTry(async function* () {
-   *   const okValue = yield* yourResult
-   * })
-   * ```
-   * Emulates Rust's `?` operator in `safeTry`'s body. See also `safeTry`.
-   */
-  async *safeUnwrap(): AsyncGenerator<Err<never, E>, T> {
-    return yield* await this._promise.then((res) => res.safeUnwrap())
-  }
-
   // Makes ResultAsync implement PromiseLike<Result>
   then<A, B>(
     successCallback?: (res: Result<T, E>) => A | PromiseLike<A>,

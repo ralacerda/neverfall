@@ -816,14 +816,6 @@ const result = Result.combineWithAllErrors(resultList)
 
 [⬆️ Back to top](#toc)
 
-#### `Result.safeUnwrap()`
-
-**Deprecated**. You don't need to use this method anymore.
-
-Allows for unwrapping a `Result` or returning an `Err` implicitly, thereby reducing boilerplate.
-
-[⬆️ Back to top](#toc)
-
 ---
 
 ### Asynchronous API (`ResultAsync`)
@@ -1460,14 +1452,6 @@ const result = ResultAsync.combineWithAllErrors(resultList)
 
 // result is Err(['boooom!', 'ahhhhh!'])
 ```
-
-#### `ResultAsync.safeUnwrap()`
-
-**Deprecated**. You don't need to use this method anymore.
-
-Allows for unwrapping a `Result` or returning an `Err` implicitly, thereby reducing boilerplate.
-
-[⬆️ Back to top](#toc)
 
 ---
 

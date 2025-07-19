@@ -276,20 +276,6 @@ interface IResult<T, E> {
   match<A, B = A>(ok: (t: T) => A, err: (e: E) => B): A | B
 
   /**
-   * @deprecated will be removed in 9.0.0.
-   *
-   * You can use `safeTry` without this method.
-   * @example
-   * ```typescript
-   * safeTry(function* () {
-   *   const okValue = yield* yourResult
-   * })
-   * ```
-   * Emulates Rust's `?` operator in `safeTry`'s body. See also `safeTry`.
-   */
-  safeUnwrap(): Generator<Err<never, E>, T>
-
-  /**
    * **This method is unsafe, and should only be used in a test environments**
    *
    * Takes a `Result<T, E>` and returns a `T` when the result is an `Ok`, otherwise it throws a custom object.
