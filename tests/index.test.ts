@@ -13,6 +13,10 @@ import {
   okAsync,
   Result,
   ResultAsync,
+  combine,
+  combineWithAllErrors,
+  combineAsync,
+  combineAsyncWithAllErrors,
 } from '../src'
 
 import { vitest, describe, expect, it } from 'vitest'
@@ -478,7 +482,7 @@ describe('Result.Err', () => {
 describe('Result.fromThrowable', () => {
   it('Creates a function that returns an OK result when the inner function does not throw', () => {
     const hello = (): string => 'hello'
-    const safeHello = Result.fromThrowable(hello)
+    const safeHello = fromThrowable(hello)
 
     const result = hello()
     const safeResult = safeHello()
@@ -490,7 +494,7 @@ describe('Result.fromThrowable', () => {
   // Added for issue #300 -- the test here is not so much that expectations are met as that the test compiles.
   it('Accepts an inner function which takes arguments', () => {
     const hello = (fname: string): string => `hello, ${fname}`
-    const safeHello = Result.fromThrowable(hello)
+    const safeHello = fromThrowable(hello)
 
     const result = hello('Dikembe')
     const safeResult = safeHello('Dikembe')
@@ -506,7 +510,7 @@ describe('Result.fromThrowable', () => {
 
     // type: () => Result<string, unknown>
     // received types from thrower fn, no errorFn is provides therefore Err type is unknown
-    const safeThrower = Result.fromThrowable(thrower)
+    const safeThrower = fromThrowable(thrower)
     const result = safeThrower()
 
     expect(result).toBeInstanceOf(Err)
@@ -522,7 +526,7 @@ describe('Result.fromThrowable', () => {
 
     // type: () => Result<string, MessageObject>
     // received types from thrower fn and errorFn return type
-    const safeThrower = Result.fromThrowable(thrower, toMessageObject)
+    const safeThrower = fromThrowable(thrower, toMessageObject)
     const result = safeThrower()
 
     expect(result.isOk()).toBe(false)
@@ -530,19 +534,15 @@ describe('Result.fromThrowable', () => {
     expect(result).toBeInstanceOf(Err)
     expect(result._unsafeUnwrapErr()).toEqual({ message: 'error' })
   })
-
-  it('has a top level export', () => {
-    expect(fromThrowable).toBe(Result.fromThrowable)
-  })
 })
 
 describe('Utils', () => {
-  describe('`Result.combine`', () => {
+  describe('`combine`', () => {
     describe('Synchronous `combine`', () => {
       it('Combines a list of results into an Ok value', () => {
         const resultList = [ok(123), ok(456), ok(789)]
 
-        const result = Result.combine(resultList)
+        const result = combine(resultList)
 
         expect(result.isOk()).toBe(true)
         expect(result._unsafeUnwrap()).toEqual([123, 456, 789])
@@ -556,7 +556,7 @@ describe('Utils', () => {
           err('ahhhhh!'),
         ]
 
-        const result = Result.combine(resultList)
+        const result = combine(resultList)
 
         expect(result.isErr()).toBe(true)
         expect(result._unsafeUnwrapErr()).toBe('boooom!')
@@ -573,7 +573,7 @@ describe('Utils', () => {
 
         type ExpecteResult = Result<[string, number, boolean], string | number | boolean>
 
-        const result: ExpecteResult = Result.combine(heterogenousList)
+        const result: ExpecteResult = combine(heterogenousList)
 
         expect(result._unsafeUnwrap()).toEqual(['Yooooo', 123, true])
       })
@@ -585,7 +585,7 @@ describe('Utils', () => {
 
         type ExpectedResult = Result<[string[], number[]], boolean | string>
 
-        const result: ExpectedResult = Result.combine(homogenousList)
+        const result: ExpectedResult = combine(homogenousList)
 
         expect(result._unsafeUnwrap()).toEqual([
           ['hello', 'world'],
@@ -594,15 +594,15 @@ describe('Utils', () => {
       })
     })
 
-    describe('`ResultAsync.combine`', () => {
+    describe('`combineAsync`', () => {
       it('Combines a list of async results into an Ok value', async () => {
         const asyncResultList = [okAsync(123), okAsync(456), okAsync(789)]
 
-        const resultAsync: ResultAsync<number[], never[]> = ResultAsync.combine(asyncResultList)
+        const resultAsync: ResultAsync<number[], never[]> = combineAsync(asyncResultList)
 
         expect(resultAsync).toBeInstanceOf(ResultAsync)
 
-        const result = await ResultAsync.combine(asyncResultList)
+        const result = await combineAsync(asyncResultList)
 
         expect(result.isOk()).toBe(true)
         expect(result._unsafeUnwrap()).toEqual([123, 456, 789])
@@ -616,7 +616,7 @@ describe('Utils', () => {
           errAsync('ahhhhh!'),
         ]
 
-        const result = await ResultAsync.combine(resultList)
+        const result = await combineAsync(resultList)
 
         expect(result.isErr()).toBe(true)
         expect(result._unsafeUnwrapErr()).toBe('boooom!')
@@ -639,18 +639,18 @@ describe('Utils', () => {
 
         type ExpecteResult = Result<[string, number, boolean, number[]], string | number | boolean>
 
-        const result: ExpecteResult = await ResultAsync.combine(heterogenousList)
+        const result: ExpecteResult = await combineAsync(heterogenousList)
 
         expect(result._unsafeUnwrap()).toEqual(['Yooooo', 123, true, [1, 2, 3]])
       })
     })
   })
-  describe('`Result.combineWithAllErrors`', () => {
+  describe('`combineWithAllErrors`', () => {
     describe('Synchronous `combineWithAllErrors`', () => {
       it('Combines a list of results into an Ok value', () => {
         const resultList = [ok(123), ok(456), ok(789)]
 
-        const result = Result.combineWithAllErrors(resultList)
+        const result = combineWithAllErrors(resultList)
 
         expect(result.isOk()).toBe(true)
         expect(result._unsafeUnwrap()).toEqual([123, 456, 789])
@@ -664,7 +664,7 @@ describe('Utils', () => {
           err('ahhhhh!'),
         ]
 
-        const result = Result.combineWithAllErrors(resultList)
+        const result = combineWithAllErrors(resultList)
 
         expect(result.isErr()).toBe(true)
         expect(result._unsafeUnwrapErr()).toEqual(['boooom!', 'ahhhhh!'])
@@ -681,7 +681,7 @@ describe('Utils', () => {
 
         type ExpecteResult = Result<[string, number, boolean], (string | number | boolean)[]>
 
-        const result: ExpecteResult = Result.combineWithAllErrors(heterogenousList)
+        const result: ExpecteResult = combineWithAllErrors(heterogenousList)
 
         expect(result._unsafeUnwrap()).toEqual(['Yooooo', 123, true])
       })
@@ -693,7 +693,7 @@ describe('Utils', () => {
 
         type ExpectedResult = Result<[string[], number[]], (boolean | string)[]>
 
-        const result: ExpectedResult = Result.combineWithAllErrors(homogenousList)
+        const result: ExpectedResult = combineWithAllErrors(homogenousList)
 
         expect(result._unsafeUnwrap()).toEqual([
           ['hello', 'world'],
@@ -701,11 +701,11 @@ describe('Utils', () => {
         ])
       })
     })
-    describe('`ResultAsync.combineWithAllErrors`', () => {
+    describe('`combineAsyncWithAllErrors`', () => {
       it('Combines a list of async results into an Ok value', async () => {
         const asyncResultList = [okAsync(123), okAsync(456), okAsync(789)]
 
-        const result = await ResultAsync.combineWithAllErrors(asyncResultList)
+        const result = await combineAsyncWithAllErrors(asyncResultList)
 
         expect(result.isOk()).toBe(true)
         expect(result._unsafeUnwrap()).toEqual([123, 456, 789])
@@ -719,7 +719,7 @@ describe('Utils', () => {
           errAsync('ahhhhh!'),
         ]
 
-        const result = await ResultAsync.combineWithAllErrors(asyncResultList)
+        const result = await combineAsyncWithAllErrors(asyncResultList)
 
         expect(result.isErr()).toBe(true)
         expect(result._unsafeUnwrapErr()).toEqual(['boooom!', 'ahhhhh!'])
@@ -736,13 +736,13 @@ describe('Utils', () => {
 
         type ExpecteResult = Result<[string, number, boolean], (string | number | boolean)[]>
 
-        const result: ExpecteResult = await ResultAsync.combineWithAllErrors(heterogenousList)
+        const result: ExpecteResult = await combineAsyncWithAllErrors(heterogenousList)
 
         expect(result._unsafeUnwrap()).toEqual(['Yooooo', 123, true])
       })
     })
 
-    describe('testdouble `ResultAsync.combine`', () => {
+    describe('testdouble `combineAsync`', () => {
       interface ITestInterface {
         getName(): string
         setName(name: string): void
@@ -752,7 +752,7 @@ describe('Utils', () => {
       it('Combines `testdouble` proxies from mocks generated via interfaces', async () => {
         const mock = td.object<ITestInterface>()
 
-        const result = await ResultAsync.combine([okAsync(mock)] as const)
+        const result = await combineAsync([okAsync(mock)] as const)
 
         expect(result).toBeDefined()
         expect(result.isErr()).toBeFalsy()
@@ -1185,7 +1185,7 @@ describe('ResultAsync', () => {
 
   describe('fromSafePromise', () => {
     it('Creates a ResultAsync from a Promise', async () => {
-      const res = ResultAsync.fromSafePromise(Promise.resolve(12))
+      const res = fromSafePromise(Promise.resolve(12))
 
       expect(res).toBeInstanceOf(ResultAsync)
 
@@ -1193,15 +1193,11 @@ describe('ResultAsync', () => {
       expect(val.isOk()).toBe(true)
       expect(val._unsafeUnwrap()).toEqual(12)
     })
-
-    it('has a top level export', () => {
-      expect(fromSafePromise).toBe(ResultAsync.fromSafePromise)
-    })
   })
 
   describe('fromPromise', () => {
     it('Accepts an error handler as a second argument', async () => {
-      const res = ResultAsync.fromPromise(Promise.reject('No!'), (e) => new Error('Oops: ' + e))
+      const res = fromPromise(Promise.reject('No!'), (e) => new Error('Oops: ' + e))
 
       expect(res).toBeInstanceOf(ResultAsync)
 
@@ -1209,15 +1205,11 @@ describe('ResultAsync', () => {
       expect(val.isErr()).toBe(true)
       expect(val._unsafeUnwrapErr()).toEqual(Error('Oops: No!'))
     })
-
-    it('has a top level export', () => {
-      expect(fromPromise).toBe(ResultAsync.fromPromise)
-    })
   })
 
   describe('ResultAsync.fromThrowable', () => {
     it('creates a new function that returns a ResultAsync', async () => {
-      const example = ResultAsync.fromThrowable(async (a: number, b: number) => a + b)
+      const example = fromAsyncThrowable(async (a: number, b: number) => a + b)
       const res = example(4, 8)
       expect(res).toBeInstanceOf(ResultAsync)
 
@@ -1227,7 +1219,7 @@ describe('ResultAsync', () => {
     })
 
     it('handles synchronous errors', async () => {
-      const example = ResultAsync.fromThrowable(() => {
+      const example = fromAsyncThrowable(() => {
         if (1 > 0) throw new Error('Oops: No!')
 
         return Promise.resolve(12)
@@ -1240,7 +1232,7 @@ describe('ResultAsync', () => {
     })
 
     it('handles asynchronous errors', async () => {
-      const example = ResultAsync.fromThrowable(async () => {
+      const example = fromAsyncThrowable(async () => {
         if (1 > 0) throw new Error('Oops: No!')
 
         return 12
@@ -1253,7 +1245,7 @@ describe('ResultAsync', () => {
     })
 
     it('Accepts an error handler as a second argument', async () => {
-      const example = ResultAsync.fromThrowable(
+      const example = fromAsyncThrowable(
         () => Promise.reject('No!'),
         (e) => new Error('Oops: ' + e),
       )
@@ -1262,10 +1254,6 @@ describe('ResultAsync', () => {
       expect(val.isErr()).toBe(true)
 
       expect(val._unsafeUnwrapErr()).toEqual(Error('Oops: No!'))
-    })
-
-    it('has a top level export', () => {
-      expect(fromAsyncThrowable).toBe(ResultAsync.fromThrowable)
     })
   })
 

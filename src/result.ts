@@ -1,4 +1,4 @@
-import { errAsync, ResultAsync } from './'
+import { errAsync, ResultAsync, fromSafePromise } from './'
 import { createNeverThrowError, ErrorConfig } from './_internals/error'
 import {
   combineResultList,
@@ -9,55 +9,6 @@ import {
   InferErrTypes,
   InferOkTypes,
 } from './_internals/utils'
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace Result {
-  /**
-   * Wraps a function with a try catch, creating a new function with the same
-   * arguments but returning `Ok` if successful, `Err` if the function throws
-   *
-   * @param fn function to wrap with ok on success or err on failure
-   * @param errorFn when an error is thrown, this will wrap the error result if provided
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export function fromThrowable<Fn extends (...args: readonly any[]) => any, E>(
-    fn: Fn,
-    errorFn?: (e: unknown) => E,
-  ): (...args: Parameters<Fn>) => Result<ReturnType<Fn>, E> {
-    return (...args) => {
-      try {
-        const result = fn(...args)
-        return ok(result)
-      } catch (e) {
-        return err(errorFn ? errorFn(e) : e)
-      }
-    }
-  }
-
-  export function combine<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
-  >(resultList: T): CombineResults<T>
-  export function combine<T extends readonly Result<unknown, unknown>[]>(
-    resultList: T,
-  ): CombineResults<T>
-  export function combine<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
-  >(resultList: T): CombineResults<T> {
-    return combineResultList(resultList) as CombineResults<T>
-  }
-
-  export function combineWithAllErrors<
-    T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
-  >(resultList: T): CombineResultsWithAllErrorsArray<T>
-  export function combineWithAllErrors<T extends readonly Result<unknown, unknown>[]>(
-    resultList: T,
-  ): CombineResultsWithAllErrorsArray<T>
-  export function combineWithAllErrors<T extends readonly Result<unknown, unknown>[]>(
-    resultList: T,
-  ): CombineResultsWithAllErrorsArray<T> {
-    return combineResultListWithAllErrors(resultList) as CombineResultsWithAllErrorsArray<T>
-  }
-}
 
 export type Result<T, E> = Ok<T, E> | Err<T, E>
 
@@ -366,7 +317,7 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 
   asyncMap<U>(f: (t: T) => Promise<U>): ResultAsync<U, E> {
-    return ResultAsync.fromSafePromise(f(this.value))
+    return fromSafePromise(f(this.value))
   }
 
   unwrapOr<A>(_v: A): T | A {
@@ -500,7 +451,51 @@ export class Err<T, E> implements IResult<T, E> {
   }
 }
 
-export const fromThrowable = Result.fromThrowable
+/**
+ * Wraps a function with a try catch, creating a new function with the same
+ * arguments but returning `Ok` if successful, `Err` if the function throws
+ *
+ * @param fn function to wrap with ok on success or err on failure
+ * @param errorFn when an error is thrown, this will wrap the error result if provided
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function fromThrowable<Fn extends (...args: readonly any[]) => any, E>(
+  fn: Fn,
+  errorFn?: (e: unknown) => E,
+): (...args: Parameters<Fn>) => Result<ReturnType<Fn>, E> {
+  return (...args) => {
+    try {
+      const result = fn(...args)
+      return ok(result)
+    } catch (e) {
+      return err(errorFn ? errorFn(e) : e)
+    }
+  }
+}
+
+export function combine<
+  T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
+>(resultList: T): CombineResults<T>
+export function combine<T extends readonly Result<unknown, unknown>[]>(
+  resultList: T,
+): CombineResults<T>
+export function combine<
+  T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
+>(resultList: T): CombineResults<T> {
+  return combineResultList(resultList) as CombineResults<T>
+}
+
+export function combineWithAllErrors<
+  T extends readonly [Result<unknown, unknown>, ...Result<unknown, unknown>[]],
+>(resultList: T): CombineResultsWithAllErrorsArray<T>
+export function combineWithAllErrors<T extends readonly Result<unknown, unknown>[]>(
+  resultList: T,
+): CombineResultsWithAllErrorsArray<T>
+export function combineWithAllErrors<T extends readonly Result<unknown, unknown>[]>(
+  resultList: T,
+): CombineResultsWithAllErrorsArray<T> {
+  return combineResultListWithAllErrors(resultList) as CombineResultsWithAllErrorsArray<T>
+}
 
 //#region Combine - Types
 

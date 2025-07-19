@@ -26,66 +26,6 @@ export class ResultAsync<T, E> implements PromiseLike<Result<T, E>> {
     this._promise = res
   }
 
-  static fromSafePromise<T, E = never>(promise: PromiseLike<T>): ResultAsync<T, E>
-  static fromSafePromise<T, E = never>(promise: Promise<T>): ResultAsync<T, E> {
-    const newPromise = promise.then((value: T) => new Ok<T, E>(value))
-
-    return new ResultAsync(newPromise)
-  }
-
-  static fromPromise<T, E>(promise: PromiseLike<T>, errorFn: (e: unknown) => E): ResultAsync<T, E>
-  static fromPromise<T, E>(promise: Promise<T>, errorFn: (e: unknown) => E): ResultAsync<T, E> {
-    const newPromise = promise
-      .then((value: T) => new Ok<T, E>(value))
-      .catch((e) => new Err<T, E>(errorFn(e)))
-
-    return new ResultAsync(newPromise)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromThrowable<A extends readonly any[], R, E>(
-    fn: (...args: A) => Promise<R>,
-    errorFn?: (err: unknown) => E,
-  ): (...args: A) => ResultAsync<R, E> {
-    return (...args) => {
-      return new ResultAsync(
-        (async () => {
-          try {
-            return new Ok(await fn(...args))
-          } catch (error) {
-            return new Err(errorFn ? errorFn(error) : error)
-          }
-        })(),
-      )
-    }
-  }
-
-  static combine<
-    T extends readonly [ResultAsync<unknown, unknown>, ...ResultAsync<unknown, unknown>[]],
-  >(asyncResultList: T): CombineResultAsyncs<T>
-  static combine<T extends readonly ResultAsync<unknown, unknown>[]>(
-    asyncResultList: T,
-  ): CombineResultAsyncs<T>
-  static combine<T extends readonly ResultAsync<unknown, unknown>[]>(
-    asyncResultList: T,
-  ): CombineResultAsyncs<T> {
-    return combineResultAsyncList(asyncResultList) as unknown as CombineResultAsyncs<T>
-  }
-
-  static combineWithAllErrors<
-    T extends readonly [ResultAsync<unknown, unknown>, ...ResultAsync<unknown, unknown>[]],
-  >(asyncResultList: T): CombineResultsWithAllErrorsArrayAsync<T>
-  static combineWithAllErrors<T extends readonly ResultAsync<unknown, unknown>[]>(
-    asyncResultList: T,
-  ): CombineResultsWithAllErrorsArrayAsync<T>
-  static combineWithAllErrors<T extends readonly ResultAsync<unknown, unknown>[]>(
-    asyncResultList: T,
-  ): CombineResultsWithAllErrorsArrayAsync<T> {
-    return combineResultAsyncListWithAllErrors(
-      asyncResultList,
-    ) as CombineResultsWithAllErrorsArrayAsync<T>
-  }
-
   map<A>(f: (t: T) => A | Promise<A>): ResultAsync<A, E> {
     return new ResultAsync(
       this._promise.then(async (res: Result<T, E>) => {
@@ -240,10 +180,78 @@ export function errAsync<T = never, E = unknown>(err: E): ResultAsync<T, E> {
   return new ResultAsync(Promise.resolve(new Err<T, E>(err)))
 }
 
-export const fromPromise = ResultAsync.fromPromise
-export const fromSafePromise = ResultAsync.fromSafePromise
+export function combineAsync<
+  T extends readonly [ResultAsync<unknown, unknown>, ...ResultAsync<unknown, unknown>[]],
+>(asyncResultList: T): CombineResultAsyncs<T>
+export function combineAsync<T extends readonly ResultAsync<unknown, unknown>[]>(
+  asyncResultList: T,
+): CombineResultAsyncs<T>
+export function combineAsync<T extends readonly ResultAsync<unknown, unknown>[]>(
+  asyncResultList: T,
+): CombineResultAsyncs<T> {
+  return combineResultAsyncList(asyncResultList) as unknown as CombineResultAsyncs<T>
+}
 
-export const fromAsyncThrowable = ResultAsync.fromThrowable
+export function combineAsyncWithAllErrors<
+  T extends readonly [ResultAsync<unknown, unknown>, ...ResultAsync<unknown, unknown>[]],
+>(asyncResultList: T): CombineResultsWithAllErrorsArrayAsync<T>
+export function combineAsyncWithAllErrors<T extends readonly ResultAsync<unknown, unknown>[]>(
+  asyncResultList: T,
+): CombineResultsWithAllErrorsArrayAsync<T>
+export function combineAsyncWithAllErrors<T extends readonly ResultAsync<unknown, unknown>[]>(
+  asyncResultList: T,
+): CombineResultsWithAllErrorsArrayAsync<T> {
+  return combineResultAsyncListWithAllErrors(
+    asyncResultList,
+  ) as CombineResultsWithAllErrorsArrayAsync<T>
+}
+
+export function fromSafePromise<T, E = never>(promise: PromiseLike<T>): ResultAsync<T, E>
+export function fromSafePromise<T, E = never>(promise: Promise<T>): ResultAsync<T, E>
+export function fromSafePromise<T, E = never>(
+  promise: PromiseLike<T> | Promise<T>,
+): ResultAsync<T, E> {
+  const newPromise = Promise.resolve(promise).then((value: T) => new Ok<T, E>(value))
+
+  return new ResultAsync(newPromise)
+}
+
+export function fromPromise<T, E>(
+  promise: PromiseLike<T>,
+  errorFn: (e: unknown) => E,
+): ResultAsync<T, E>
+export function fromPromise<T, E>(
+  promise: Promise<T>,
+  errorFn: (e: unknown) => E,
+): ResultAsync<T, E>
+export function fromPromise<T, E>(
+  promise: PromiseLike<T> | Promise<T>,
+  errorFn: (e: unknown) => E,
+): ResultAsync<T, E> {
+  const newPromise = Promise.resolve(promise)
+    .then((value: T) => new Ok<T, E>(value))
+    .catch((e: unknown) => new Err<T, E>(errorFn(e)))
+
+  return new ResultAsync(newPromise)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function fromAsyncThrowable<A extends readonly any[], R, E>(
+  fn: (...args: A) => Promise<R>,
+  errorFn?: (err: unknown) => E,
+): (...args: A) => ResultAsync<R, E> {
+  return (...args) => {
+    return new ResultAsync(
+      (async () => {
+        try {
+          return new Ok(await fn(...args))
+        } catch (error) {
+          return new Err(errorFn ? errorFn(error) : error)
+        }
+      })(),
+    )
+  }
+}
 
 // Combines the array of async results into one result.
 export type CombineResultAsyncs<T extends readonly ResultAsync<unknown, unknown>[]> =

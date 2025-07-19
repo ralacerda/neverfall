@@ -1,5 +1,5 @@
 import { Result, ok, err } from '../result'
-import { ResultAsync } from '../result-async'
+import { ResultAsync, fromSafePromise } from '../result-async'
 
 // Given a list of Results, this extracts all the different `T` types from that list
 export type ExtractOkTypes<T extends readonly Result<unknown, unknown>[]> = {
@@ -54,9 +54,7 @@ export const combineResultList = <T, E>(
 export const combineResultAsyncList = <T, E>(
   asyncResultList: readonly ResultAsync<T, E>[],
 ): ResultAsync<readonly T[], E> =>
-  ResultAsync.fromSafePromise(Promise.all(asyncResultList)).andThen(
-    combineResultList,
-  ) as ResultAsync<T[], E>
+  fromSafePromise(Promise.all(asyncResultList)).andThen(combineResultList) as ResultAsync<T[], E>
 
 /**
  * Give a list of all the errors we find
@@ -82,6 +80,6 @@ export const combineResultListWithAllErrors = <T, E>(
 export const combineResultAsyncListWithAllErrors = <T, E>(
   asyncResultList: readonly ResultAsync<T, E>[],
 ): ResultAsync<readonly T[], E[]> =>
-  ResultAsync.fromSafePromise(Promise.all(asyncResultList)).andThen(
+  fromSafePromise(Promise.all(asyncResultList)).andThen(
     combineResultListWithAllErrors,
   ) as ResultAsync<T[], E[]>
