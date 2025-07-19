@@ -71,6 +71,7 @@ Here is what I'm looking to do:
     - [`fromAsyncThrowable`](#fromasyncthrowable)
     - [`fromPromise`](#frompromise)
     - [`fromSafePromise`](#fromsafepromise)
+    - [`fromThrowing`](#fromthrowing)
     - [`safeTry`](#safetry)
   - [Testing](#testing)
 - [A note on the neverthrow Package Name](#a-note-on-the-neverthrow-package-name)
@@ -1499,6 +1500,209 @@ Top level export of `ResultAsync.fromSafePromise`.
 Please find documentation at [ResultAsync.fromSafePromise](#resultasyncfromsafepromise-static-class-method)
 
 [⬆️ Back to top](#toc)
+
+---
+
+#### `fromThrowing`
+
+`fromThrowing` is a utility function that creates a safe wrapper around any client or object, ensuring that all operations return `Result` or `ResultAsync` instead of throwing exceptions. This is particularly useful when working with database clients, API clients, or any third-party libraries that might throw errors.
+
+**Signature:**
+
+```typescript
+function fromThrowing<T, U>(
+  client: T,
+  errorFn: (err: unknown) => U,
+): {
+  use<R>(fn: (client: T) => Promise<R>): ResultAsync<R, U>
+  useSync<R>(fn: (client: T) => R): Result<R, U>
+}
+```
+
+**Parameters:**
+
+- `client`: The client/object you want to wrap safely
+- `errorFn`: A function that transforms caught errors into your desired error type
+
+**Returns:**
+An object with two methods:
+
+- `use`: For async operations that return promises
+- `useSync`: For synchronous operations (rarely needed)
+
+**Example with Database Client:**
+
+```typescript
+import { fromThrowing, Result, ResultAsync } from 'neverfall'
+
+// Mock database client that might throw
+interface DatabaseClient {
+  query(sql: string): Promise<any[]>
+  executeSync(sql: string): any[]
+  close(): Promise<void>
+}
+
+const dbClient: DatabaseClient = {
+  query: async (sql: string) => {
+    if (sql.includes('DROP')) {
+      throw new Error('Dangerous operation not allowed')
+    }
+    return [{ id: 1, name: 'John' }]
+  },
+  executeSync: (sql: string) => {
+    if (sql.includes('invalid')) {
+      throw new Error('Invalid SQL syntax')
+    }
+    return [{ count: 5 }]
+  },
+  close: async () => {
+    throw new Error('Connection already closed')
+  },
+}
+
+// Create a safe wrapper
+const safeDb = fromThrowing(dbClient, (err) => `Database Error: ${err}`)
+
+// Example 1: Using the wrapper inline
+async function getUserById(id: number): Promise<Result<any[], string>> {
+  const result = await safeDb.use(async (db) => {
+    return await db.query(`SELECT * FROM users WHERE id = ${id}`)
+  })
+
+  return result
+}
+
+// Example 2: Creating helper functions
+function getUser(id: number): ResultAsync<any[], string> {
+  return safeDb.use((db) => db.query(`SELECT * FROM users WHERE id = ${id}`))
+}
+
+function getAllUsers(): ResultAsync<any[], string> {
+  return safeDb.use((db) => db.query('SELECT * FROM users'))
+}
+
+function closeConnection(): ResultAsync<void, string> {
+  return safeDb.use((db) => db.close())
+}
+
+// Usage examples
+async function example() {
+  // All operations return Result/ResultAsync - no exceptions thrown!
+
+  const userResult = await getUser(1)
+  if (userResult.isOk()) {
+    console.log('User found:', userResult.value)
+  } else {
+    console.log('Error:', userResult.error)
+  }
+
+  const usersResult = await getAllUsers()
+  usersResult.match(
+    (users) => console.log('All users:', users),
+    (error) => console.log('Failed to get users:', error),
+  )
+
+  // Even operations that throw will be safely wrapped
+  const closeResult = await closeConnection()
+  if (closeResult.isErr()) {
+    console.log('Expected error:', closeResult.error)
+    // Output: "Expected error: Database Error: Error: Connection already closed"
+  }
+}
+```
+
+**Example with API Client:**
+
+```typescript
+import axios, { AxiosInstance } from 'axios'
+
+const apiClient: AxiosInstance = axios.create({
+  baseURL: 'https://api.example.com',
+  timeout: 5000,
+})
+
+const safeApi = fromThrowing(apiClient, (err) => ({
+  message: 'API request failed',
+  originalError: String(err),
+  timestamp: new Date().toISOString(),
+}))
+
+function fetchUser(id: number) {
+  return safeApi.use((client) => client.get(`/users/${id}`))
+}
+
+function createUser(userData: any) {
+  return safeApi.use((client) => client.post('/users', userData))
+}
+
+// Usage
+const userResult = await fetchUser(123)
+userResult.match(
+  (response) => console.log('User data:', response.data),
+  (error) => console.log('API error:', error.message),
+)
+```
+
+**Custom Error Handling:**
+
+```typescript
+interface AppError {
+  code: string
+  message: string
+  details?: any
+}
+
+const safeClient = fromThrowing(someClient, (err): AppError => {
+  if (err instanceof Error) {
+    return {
+      code: 'CLIENT_ERROR',
+      message: err.message,
+      details: err.stack,
+    }
+  }
+
+  return {
+    code: 'UNKNOWN_ERROR',
+    message: 'An unknown error occurred',
+    details: err,
+  }
+})
+```
+
+**Using `useSync` for Synchronous Operations:**
+
+In rare cases where you need to wrap synchronous operations, you can use `useSync`:
+
+```typescript
+const config = { timeout: 5000, retries: 3 }
+
+const safeConfig = fromThrowing(config, (err) => `Config Error: ${err}`)
+
+// Synchronous operation that might throw
+const result = safeConfig.useSync((cfg) => {
+  if (cfg.timeout < 0) {
+    throw new Error('Invalid timeout value')
+  }
+  return cfg.timeout * cfg.retries
+})
+
+result.match(
+  (value) => console.log('Calculated value:', value),
+  (error) => console.log('Configuration error:', error),
+)
+```
+
+**Key Benefits:**
+
+1. **No exceptions escape**: All operations are wrapped in `Result` or `ResultAsync`
+2. **Consistent error handling**: Both sync throws and promise rejections are handled uniformly
+3. **Type safety**: Full TypeScript support with proper type inference
+4. **Flexible error mapping**: Transform errors into your preferred error types
+5. **Chainable**: Results can be chained with other `Result`/`ResultAsync` operations
+
+[⬆️ Back to top](#toc)
+
+---
 
 #### `safeTry`
 
