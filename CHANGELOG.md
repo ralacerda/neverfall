@@ -1,5 +1,22 @@
 # neverfall
 
+## v1.1.0
+
+[compare changes](https://github.com/ralacerda/neverthrow2/compare/v1.0.0...v1.1.0)
+
+### 🚀 Enhancements
+
+- New fromThrowing utility to wrap third-party clients ([d1ce3bc](https://github.com/ralacerda/neverthrow2/commit/d1ce3bc))
+
+### 🏡 Chore
+
+- **release:** V1.0.0 ([a79e34d](https://github.com/ralacerda/neverthrow2/commit/a79e34d))
+- Removing changeset configuration for now ([d26cfca](https://github.com/ralacerda/neverthrow2/commit/d26cfca))
+
+### ❤️ Contributors
+
+- Renato Lacerda <renato.ac.lacerda@gmail.com>
+
 ## v1.0.0
 
 Release as a stable version of the forked project.
