@@ -20,11 +20,10 @@
   ],
   "scripts": {
     "local-ci": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run format && pnpm run build",
-    "test": "vitest run && pnpm run test-types",
-    "test-types": "tsc --noEmit -p ./tests/tsconfig.tests.json",
+    "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write 'src/**/*.ts' && eslint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "clean": "rm -rf ./dist ./tmp",
     "build": "pnpm run clean && tsdown --format cjs --format esm src/index.ts && attw --pack .",
     "prepublishOnly": "pnpm run build"
