@@ -30,14 +30,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ralacerda/neverthrow2.git"
+    "url": "git+https://github.com/ralacerda/neverfall.git"
   },
   "author": "Renato Lacerda",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ralacerda/neverthrow2/issues"
+    "url": "https://github.com/ralacerda/neverfall/issues"
   },
-  "homepage": "https://github.com/ralacerda/neverthrow2#readme",
+  "homepage": "https://github.com/ralacerda/neverfall#readme",
   "devDependencies": {
     "@eslint/js": "^9.31.0",
     "@types/node": "^22.16.4",
