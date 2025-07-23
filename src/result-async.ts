@@ -53,7 +53,7 @@ export class ResultAsync<T, E> implements PromiseLike<Result<T, E>> {
           try {
             return new Ok(await fn(...args))
           } catch (error) {
-            return new Err(errorFn ? errorFn(error) : error)
+            return new Err(errorFn ? errorFn(error) : (error as E))
           }
         })(),
       )

@@ -29,7 +29,7 @@ export namespace Result {
         const result = fn(...args)
         return ok(result)
       } catch (e) {
-        return err(errorFn ? errorFn(e) : e)
+        return err(errorFn ? errorFn(e) : (e as E))
       }
     }
   }
