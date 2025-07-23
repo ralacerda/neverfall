@@ -246,7 +246,7 @@ export function fromAsyncThrowable<A extends readonly any[], R, E>(
         try {
           return new Ok(await fn(...args))
         } catch (error) {
-          return new Err(errorFn ? errorFn(error) : error)
+          return new Err(errorFn ? errorFn(error) : (error as E))
         }
       })(),
     )

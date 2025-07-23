@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "target": "ES2023",
+    "module": "preserve",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "lib": [
-      "ES2016",
-      "ES2017.Object"
-    ],
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": true,
+    "strict": true,
   },
   "include": [
     "src/**/*.ts",

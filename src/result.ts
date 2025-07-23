@@ -468,7 +468,7 @@ export function fromThrowable<Fn extends (...args: readonly any[]) => any, E>(
       const result = fn(...args)
       return ok(result)
     } catch (e) {
-      return err(errorFn ? errorFn(e) : e)
+      return err(errorFn ? errorFn(e) : (e as E))
     }
   }
 }
